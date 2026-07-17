@@ -3,51 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order - SEN'Q RESTAURANT</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <title>Order - SEN'Q Restaurant</title>
+    <link rel="stylesheet" href="resources/css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4a085e9b53.js" crossorigin="anonymous"></script>
     <style>
-        .order-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            margin: 40px 0;
-        }
-        .order-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-            border: 1px solid #eee;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        .order-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-        }
-        .order-card i {
-            font-size: 4rem;
-            color: #b45f2b;
-            margin-bottom: 16px;
-        }
-        .order-card h3 {
-            font-size: 1.6rem;
-            color: #2c1f16;
-        }
-        .order-card p {
-            color: #666;
-            margin: 10px 0 16px;
-        }
-        .order-card .btn {
-            display: inline-block;
-        }
-        @media (max-width: 800px) {
-            .order-container {
-                grid-template-columns: 1fr;
-            }
-        }
+        .order-page { padding: 40px 0; }
+        .order-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .menu-items { background: #fff; padding: 30px; border-radius: 30px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item .info { flex: 1; }
+        .menu-item .info h4 { font-size: 1.1rem; color: #2c1f16; }
+        .menu-item .info .price { color: #b45f2b; font-weight: 700; }
+        .menu-item .qty { display: flex; align-items: center; gap: 10px; }
+        .menu-item .qty button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ccc; background: #fff; cursor: pointer; font-weight: 700; }
+        .menu-item .qty button:hover { background: #b45f2b; color: #fff; border-color: #b45f2b; }
+        .menu-item .qty span { width: 30px; text-align: center; font-weight: 600; }
+        .cart-summary { background: #f7f2e9; padding: 30px; border-radius: 30px; position: sticky; top: 20px; }
+        .cart-summary h3 { color: #2c1f16; margin-bottom: 20px; }
+        .cart-summary .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .cart-summary .total { font-size: 1.5rem; font-weight: 700; color: #b45f2b; margin-top: 20px; text-align: right; }
+        .cart-summary .btn { width: 100%; margin-top: 20px; }
+        .order-type { display: flex; gap: 10px; margin: 20px 0; }
+        .order-type button { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 10px; background: #fff; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .order-type button.active { border-color: #b45f2b; background: #b45f2b; color: #fff; }
+        .delivery-info { display: none; }
+        .delivery-info.show { display: block; }
+        @media (max-width: 800px) { .order-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -56,9 +39,14 @@
 <div class="top-bar">
     <div class="container">
         <div class="flex">
-            <a href="login.html"><i class="fas fa-sign-in-alt"></i> Log in</a>
-            <a href="signup.html"><i class="fas fa-user-plus"></i> Sign up</a>
-            <a href="cart.html"><i class="fas fa-shopping-cart"></i> My cart</a>
+            <div id="authButtons">
+                <a href="login.html"><i class="fas fa-sign-in-alt"></i> Log in</a>
+                <a href="signup.html"><i class="fas fa-user-plus"></i> Sign up</a>
+            </div>
+            <div id="userInfo" style="display:none;">
+                <span class="welcome">Welcome, <span id="userName"></span></span>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
         </div>
     </div>
 </div>
@@ -68,57 +56,56 @@
     <div class="container">
         <div class="flex">
             <div class="logo-area">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23b45f2b'/%3E%3Ctext x='28' y='68' font-size='42' fill='%23f1c40f' font-family='serif' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E" alt="logo">
+                <img src="resources/images/logo.jpg" alt="SEN'Q">
                 <h1>SEN'Q</h1>
             </div>
             <nav class="nav-links">
                 <a href="index.html">Home</a>
-                <a href="about.html">About</a>
                 <a href="menu.html">Menu</a>
-                <a href="order.html" style="border-bottom-color: #f1c40f; color: #f1c40f;">Order</a>
+                <a href="booking.html">Book Table</a>
+                <a href="order.html" class="active">Order</a>
                 <a href="contact.html">Contact</a>
             </nav>
         </div>
     </div>
 </header>
 
-<!-- ORDER OPTIONS -->
-<section class="container">
-    <h2 class="section-title">Place Your Order</h2>
-    <div class="order-container">
-        <div class="order-card">
-            <i class="fas fa-utensils"></i>
-            <h3>Dine-in</h3>
-            <p>Enjoy your meal at our restaurant with traditional atmosphere.</p>
-            <a href="booking.html" class="btn">Book a Table</a>
-        </div>
-        <div class="order-card">
-            <i class="fas fa-truck"></i>
-            <h3>Delivery</h3>
-            <p>Get your favorite food delivered to your doorstep.</p>
-            <a href="#" class="btn">Order Delivery</a>
-        </div>
-        <div class="order-card">
-            <i class="fas fa-shopping-bag"></i>
-            <h3>Takeaway</h3>
-            <p>Order online and pick up at our restaurant.</p>
-            <a href="#" class="btn">Order Takeaway</a>
-        </div>
-    </div>
-
-    <!-- Quick order form -->
-    <div style="background:#f7f2e9;padding:40px;border-radius:30px;margin:30px 0 60px;">
-        <h3 style="text-align:center;margin-bottom:20px;color:#2c1f16;">Quick Order</h3>
-        <form>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-                <input type="text" placeholder="Full name" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
-                <input type="tel" placeholder="Phone number" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
-                <input type="text" placeholder="Food item" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
-                <input type="number" placeholder="Quantity" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
+<!-- ORDER -->
+<section class="order-page">
+    <div class="container">
+        <h2 class="section-title">Place Your Order</h2>
+        
+        <div class="order-grid">
+            <!-- Menu Items -->
+            <div class="menu-items">
+                <h3 style="margin-bottom:20px;">Select Items</h3>
+                <div id="menuList">
+                    <!-- Loaded by JavaScript -->
+                </div>
             </div>
-            <textarea placeholder="Special instructions..." style="width:100%;padding:14px 18px;border-radius:20px;border:1px solid #ccc;min-height:80px;margin-top:20px;"></textarea>
-            <button type="submit" class="btn" style="width:100%;margin-top:20px;padding:16px;">Place Order</button>
-        </form>
+            
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <h3>Your Order</h3>
+                <div id="cartItems">
+                    <p style="color:#999;">No items in cart</p>
+                </div>
+                <div class="total">Total: <span id="totalPrice">0</span> Br</div>
+                
+                <div class="order-type">
+                    <button class="active" onclick="setOrderType('dine_in')">Dine-in</button>
+                    <button onclick="setOrderType('takeaway')">Takeaway</button>
+                    <button onclick="setOrderType('delivery')">Delivery</button>
+                </div>
+                
+                <div id="deliveryInfo" class="delivery-info">
+                    <label>Delivery Address</label>
+                    <input type="text" id="address" placeholder="Enter your address" style="width:100%;padding:12px;border-radius:20px;border:1px solid #ccc;margin-top:10px;">
+                </div>
+                
+                <button class="btn" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -166,6 +153,157 @@
         </div>
     </div>
 </footer>
+
+<script>
+let cart = [];
+let orderType = 'dine_in';
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadMenuItems();
+    checkAuthStatus();
+});
+
+function loadMenuItems() {
+    fetch('../backend/api/menu/get.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const container = document.getElementById('menuList');
+                container.innerHTML = data.menu.map(item => `
+                    <div class="menu-item">
+                        <div class="info">
+                            <h4>${item.food_name}</h4>
+                            <p style="color:#666;font-size:0.85rem;">${item.food_description}</p>
+                            <span class="price">${item.food_price} Br</span>
+                        </div>
+                        <div class="qty">
+                            <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <span id="qty_${item.id}">0</span>
+                            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        });
+}
+
+function updateQuantity(id, change) {
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        const newQty = existing.quantity + change;
+        if (newQty <= 0) {
+            cart = cart.filter(item => item.id !== id);
+        } else {
+            existing.quantity = newQty;
+        }
+    } else if (change > 0) {
+        fetch(`../backend/api/menu/item.php?id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cart.push({
+                        id: data.item.id,
+                        name: data.item.food_name,
+                        price: data.item.food_price,
+                        quantity: 1
+                    });
+                    updateCartDisplay();
+                }
+            });
+        return;
+    }
+    updateCartDisplay();
+}
+
+function updateCartDisplay() {
+    const container = document.getElementById('cartItems');
+    const totalEl = document.getElementById('totalPrice');
+    let total = 0;
+    
+    if (cart.length === 0) {
+        container.innerHTML = '<p style="color:#999;">No items in cart</p>';
+        totalEl.textContent = '0';
+        return;
+    }
+    
+    container.innerHTML = cart.map(item => `
+        <div class="item">
+            <span>${item.name} x${item.quantity}</span>
+            <span>${item.price * item.quantity} Br</span>
+        </div>
+    `).join('');
+    
+    total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    totalEl.textContent = total;
+}
+
+function setOrderType(type) {
+    orderType = type;
+    document.querySelectorAll('.order-type button').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const deliveryInfo = document.getElementById('deliveryInfo');
+    if (type === 'delivery') {
+        deliveryInfo.classList.add('show');
+    } else {
+        deliveryInfo.classList.remove('show');
+    }
+}
+
+function placeOrder() {
+    if (cart.length === 0) {
+        alert('Please add items to your cart');
+        return;
+    }
+    
+    const data = {
+        order_type: orderType,
+        items: cart,
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        address: document.getElementById('address').value || ''
+    };
+    
+    fetch('../backend/api/order/place.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Order placed successfully! Total: ' + data.total + ' Br');
+            cart = [];
+            updateCartDisplay();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Connection error. Please try again.');
+    });
+}
+
+function checkAuthStatus() {
+    fetch('../backend/api/auth/check.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.loggedIn) {
+                document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userName').textContent = data.user.name;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function logout() {
+    fetch('../backend/api/auth/logout.php')
+        .then(() => {
+            window.location.href = 'index.html';
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
 
 </body>
 </html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order - SEN'Q RESTAURANT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .order-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .order-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .order-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        .order-card i {
+            font-size: 4rem;
+            color: #b45f2b;
+            margin-bottom: 16px;
+        }
+        .order-card h3 {
+            font-size: 1.6rem;
+            color: #2c1f16;
+        }
+        .order-card p {
+            color: #666;
+            margin: 10px 0 16px;
+        }
+        .order-card .btn {
+            display: inline-block;
+        }
+        @media (max-width: 800px) {
+            .order-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="container">
+        <div class="flex">
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> Log in</a>
+            <a href="signup.html"><i class="fas fa-user-plus"></i> Sign up</a>
+            <a href="cart.html"><i class="fas fa-shopping-cart"></i> My cart</a>
+        </div>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header class="main-header">
+    <div class="container">
+        <div class="flex">
+            <div class="logo-area">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23b45f2b'/%3E%3Ctext x='28' y='68' font-size='42' fill='%23f1c40f' font-family='serif' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E" alt="logo">
+                <h1>SEN'Q</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="menu.html">Menu</a>
+                <a href="order.html" style="border-bottom-color: #f1c40f; color: #f1c40f;">Order</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- ORDER OPTIONS -->
+<section class="container">
+    <h2 class="section-title">Place Your Order</h2>
+    <div class="order-container">
+        <div class="order-card">
+            <i class="fas fa-utensils"></i>
+            <h3>Dine-in</h3>
+            <p>Enjoy your meal at our restaurant with traditional atmosphere.</p>
+            <a href="booking.html" class="btn">Book a Table</a>
+        </div>
+        <div class="order-card">
+            <i class="fas fa-truck"></i>
+            <h3>Delivery</h3>
+            <p>Get your favorite food delivered to your doorstep.</p>
+            <a href="#" class="btn">Order Delivery</a>
+        </div>
+        <div class="order-card">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>Takeaway</h3>
+            <p>Order online and pick up at our restaurant.</p>
+            <a href="#" class="btn">Order Takeaway</a>
+        </div>
+    </div>
+
+    <!-- Quick order form -->
+    <div style="background:#f7f2e9;padding:40px;border-radius:30px;margin:30px 0 60px;">
+        <h3 style="text-align:center;margin-bottom:20px;color:#2c1f16;">Quick Order</h3>
+        <form>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <input type="text" placeholder="Full name" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
+                <input type="tel" placeholder="Phone number" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
+                <input type="text" placeholder="Food item" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
+                <input type="number" placeholder="Quantity" required style="padding:14px 18px;border-radius:40px;border:1px solid #ccc;">
+            </div>
+            <textarea placeholder="Special instructions..." style="width:100%;padding:14px 18px;border-radius:20px;border:1px solid #ccc;min-height:80px;margin-top:20px;"></textarea>
+            <button type="submit" class="btn" style="width:100%;margin-top:20px;padding:16px;">Place Order</button>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="menu.html">Menu</a></li>
+                    <li><a href="order.html">Order</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Owners</h4>
+                <ul>
+                    <li>Dibora</li>
+                    <li>Edelawit</li>
+                    <li>Eden</li>
+                    <li>Eftu</li>
+                    <li>Hawi</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="fas fa-phone"></i> +251924950125</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Addis Ababa</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Follow</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 SEN'Q Restaurant. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

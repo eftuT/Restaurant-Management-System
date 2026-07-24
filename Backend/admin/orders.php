@@ -1,221 +1,218 @@
 <?php
 session_start();
-require "../includes/db.php";
+require_once __DIR__ . '/includes/db.php';
 if(!isset($_SESSION['adminLoggedIn'])) {
-    header("location: ../includes/logout.php");
+    header("location: index.php");
+    exit;
 }
-$result = "";
-$info = "";
-$items = "";
+
 $per_page = 10;
 $count = $conn->query("SELECT * FROM basket");
 $pages = ceil((mysqli_num_rows($count)) / $per_page);
-if(isset($_GET['page'])) {
-    $page = $_GET['page'];
-} else {
-    $page = 1;
-}
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $per_page;
-$orders = $conn->query("SELECT * FROM basket LIMIT $start, $per_page");
-if($orders->num_rows) {
-    $x = 1;
-    $info .= "<table class='table table-hover'>
-                <thead>
-                    <th>Order_id</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                </thead>
-                <tbody>";
-    $items .= "<table class='table table-hover'>
-                <tbody>
-                <tr>
-                    <th>Name</th>
-                    <th>Qty</th>
-                    <td></td>
-                </tr>";
-    while($row = $orders->fetch_assoc()) {
-        $oid = $row['id'];
-        $id = $row['id']."_ord";
-        if($x == 1) {
-            $result .= "<input type='hidden' value='".$id."' id='".$id."'><a href='#' style='display: block; background: #efefef; color: #333; border-bottom: 1px solid #ccc; padding: 10px 0px;' onClick=\"func_call('".$id."'); return false\" >ORD_$oid</a>";
-            $info .= "<tr>
-                            <td>ORD_$oid</td>
-                            <td>".$row['customer_name']."</td>
-                            <td>".$row['address']."</td>
-                            <td>".$row['email']."</td>
-                            <td>".$row['contact_number']."</td>
-                        </tr>";
-            $get_data = $conn->query("SELECT * FROM items WHERE order_id='".$oid."'");
-            while($data = $get_data->fetch_assoc()) {
-                $items .= "<tr>
-                                <td>".$data['food']."</td>
-                                <td>".$data['qty']."</td>
-                                <td></td>
-                            </tr>";
-            }
-            $items .= "<tr>
-                            <th>Total Price</th>
-                            <th>".$row['total']."</th>
-                            <th></th>
-                        </tr>";
-            if($row['status'] == "pending") {
-                $items .= "<tr>
-                            <th>Status</th>
-                            <td>
-                                <select onChange=\"change_stat('".$oid."')\" name='status' id='".$oid."' class='form-control'>
-                                    <option value='pending_$oid' selected>pending</option>
-                                    <option value='confirmed_$oid'>confirmed</option>
-                                </select>
-                            </td>
-                            <th></th>
-                        </tr>";
-            } else {
-                $items .= "<tr>
-                            <th>Status</th>
-                            <td>
-                                <select onChange=\"change_stat('".$oid."')\" id='".$oid."' name='status' class='form-control'>
-                                    <option value='pending_$oid' >pending</option>
-                                    <option value='confirmed_$oid' selected>confirmed</option>
-                                </select>
-                            </td>
-                            <th></th>
-                        </tr>";
-            }
-        } else {
-            $result .= "<input type='hidden' value='".$id."' id='".$id."'><a href='#' style='display: block; background: #efefef; color: #333; border-bottom: 1px solid #ccc; padding: 10px 0px;' onClick=\"func_call('".$id."'); return false\" >ORD_$oid</a>";
-        }
-        $x++;
-    }
-    $info .= "</tbody></table>";
-    $items .= "</tbody></table>";
-} else {
-    $result = "No Orders available yet";
-    $info = "";
-    $items = "";
-}
+$orders = $conn->query("SELECT * FROM basket ORDER BY id DESC LIMIT $start, $per_page");
 ?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="assets/img/favicon.ico">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Orders - SEN'Q</title>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/css/animate.min.css" rel="stylesheet"/>
-    <link href="assets/css/light-bootstrap-dashboard.css" rel="stylesheet"/>
-    <link href="assets/css/demo.css" rel="stylesheet" />
-    <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <script>
-        function check() {
-            return confirm("Are you sure you want to delete this record");
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f2f5; }
+        .top-nav {
+            background: #1a1a2e;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
-        function func_call(id) {
-            var value = document.getElementById(id).value;
-            if(value != "") {
-                $.ajax({
-                    url: 'get_item.php',
-                    type: 'post',
-                    data: {order_id : value},
-                    success: function(data) {
-                        $("#details_display").html(data);
-                    }
-                });
-            }
+        .top-nav .logo { font-size: 22px; font-weight: 700; }
+        .top-nav .logo span { color: #f1c40f; }
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: #16213e;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
         }
-        function change_stat(id) {
-            var option = document.getElementById(id).value;
-            $.ajax({
-                url: 'get_item.php',
-                type: 'post',
-                data: {status : option},
-                success: function(data) {
-                    alert(data);
-                }
-            });
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar ul li a {
+            display: block;
+            padding: 12px 25px;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: 0.3s;
+            border-left: 3px solid transparent;
         }
-    </script>
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-left-color: #f1c40f;
+        }
+        .sidebar ul li a i { margin-right: 12px; width: 20px; }
+        .main-content {
+            margin-left: 250px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+        .card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .card .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; }
+        .table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .table tr:hover { background: #f8f9fa; }
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-processing { background: #cce5ff; color: #004085; }
+        .badge-delivered { background: #d4edda; color: #155724; }
+        .badge-cancelled { background: #f8d7da; color: #721c24; }
+        .pagination { display: flex; gap: 5px; margin-top: 20px; flex-wrap: wrap; }
+        .pagination a {
+            padding: 8px 15px;
+            background: #f0f2f5;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: 0.3s;
+        }
+        .pagination a:hover,
+        .pagination a.active {
+            background: #b45f2b;
+            color: #fff;
+        }
+        .btn-primary-sm {
+            background: #4a90d9;
+            color: #fff;
+            padding: 5px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 12px;
+        }
+        .btn-primary-sm:hover { background: #357abd; }
+        .order-status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .order-status.pending { background: #fff3cd; color: #856404; }
+        .order-status.processing { background: #cce5ff; color: #004085; }
+        .order-status.delivered { background: #d4edda; color: #155724; }
+        .order-status.cancelled { background: #f8d7da; color: #721c24; }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .empty-state i { font-size: 50px; margin-bottom: 20px; }
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar ul li a span { display: none; }
+            .main-content { margin-left: 60px; }
+        }
+    </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="sidebar" data-color="#000" data-image="assets/img/sidebar-5.jpg">
-        <?php require "includes/side_wrapper.php"; ?>
-    <div class="main-panel">
-        <nav class="navbar navbar-default navbar-fixed" style="background: #FF5722;">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar" style="background: #fff;"></span>
-                        <span class="icon-bar" style="background: #fff;"></span>
-                        <span class="icon-bar" style="background: #fff;"></span>
-                    </button>
-                    <a class="navbar-brand" href="#" style="color: #fff;">FOOD ORDERS</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="logout.php" style="color: #fff;">Log out</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title" style="text-align: center">Order List</h4>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <br/>    
-                                    <div class="col-md-3" style="text-align: center; background: #2abccc; color: #fff; border-right: 1px solid #fff;">
-                                        <h5>ORDER ID</h5>
-                                    </div>
-                                    <div class="col-md-9" style="background: #2abccc; color: #fff;">
-                                        <h5>ORDER DETAILS</h5>
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="text-align: center;">
-                                    <?php echo $result; ?>
-                                </div>
-                                <div id="details_display" class="col-md-8 table-responsive" style="padding: 10px;">
-                                    <?php echo $info; ?>
-                                    <?php echo $items; ?>
-                                </div>
-                            </div>
-                            <div class="content table-responsive table-full-width">
-                                <p style="padding: 0px 20px;">
-                                <?php if($pages >= 1 && $page <= $pages) {
-                                    for($i = 1; $i <= $pages; $i++) {
-                                        echo ($i == $page) ? "<a href='orders.php?page=".$i."' style='margin-left:5px; font-weight: bold; text-decoration: none; color: #FF5722;' >$i</a>  "  : " <a href='orders.php?page=".$i."' class='btn'>$i</a> ";
-                                    }
-                                } ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <footer class="footer">
-            <div class="container-fluid">
-                <p class="copyright pull-right">&copy; 2016 <a href="index.php" style="color: #FF5722;">SEN'Q Restaurant</a></p>
-            </div>
-        </footer>
+
+<div class="top-nav">
+    <div class="logo">🍽️ <span>SEN'Q</span> Admin</div>
+    <div>
+        <span><i class="fa fa-user-circle"></i> <?php echo $_SESSION['adminUser']; ?></span>
+        <a href="logout.php" style="color:#e74c3c;margin-left:20px;text-decoration:none;">
+            <i class="fa fa-sign-out"></i> Logout
+        </a>
     </div>
 </div>
-<script src="assets/js/jquery-1.10.2.js" type="text/javascript"></script>
-<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="assets/js/bootstrap-checkbox-radio-switch.js"></script>
-<script src="assets/js/chartist.min.js"></script>
-<script src="assets/js/bootstrap-notify.js"></script>
-<script src="assets/js/light-bootstrap-dashboard.js"></script>
-<script src="assets/js/demo.js"></script>
+
+<div class="sidebar">
+    <ul>
+        <li><a href="home.php"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+        <li><a href="addtable.php"><i class="fa fa-plus-circle"></i> <span>Add Table</span></a></li>
+        <li><a href="settings.php"><i class="fa fa-table"></i> <span>Table Status</span></a></li>
+        <li><a href="tabledel.php"><i class="fa fa-trash"></i> <span>Delete Table</span></a></li>
+        <li><a href="food_add.php"><i class="fa fa-cutlery"></i> <span>Add Food</span></a></li>
+        <li><a href="food_list.php"><i class="fa fa-list"></i> <span>Food List</span></a></li>
+        <li><a href="reservations.php"><i class="fa fa-calendar"></i> <span>Reservations</span></a></li>
+        <li><a href="orders.php" class="active"><i class="fa fa-shopping-cart"></i> <span>Orders</span></a></li>
+        <li><a href="messages.php"><i class="fa fa-envelope"></i> <span>Newsletters</span></a></li>
+        <li><a href="usersettings.php"><i class="fa fa-users"></i> <span>Admin Users</span></a></li>
+        <li><a href="logout.php" style="color:#e74c3c;"><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <h2 style="margin-bottom:25px;"><i class="fa fa-shopping-cart"></i> Customer Orders</h2>
+
+    <div class="card">
+        <div class="card-header"><i class="fa fa-list"></i> All Orders</div>
+        <?php if($orders->num_rows > 0): ?>
+        <div style="overflow-x:auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php while($row = $orders->fetch_assoc()): 
+                    $statusClass = $row['status'] == 'pending' ? 'pending' : ($row['status'] == 'processing' ? 'processing' : ($row['status'] == 'delivered' ? 'delivered' : 'cancelled'));
+                ?>
+                    <tr>
+                        <td><strong>#<?php echo str_pad($row['id'], 4, '0', STR_PAD_LEFT); ?></strong></td>
+                        <td><?php echo $row['customer_name']; ?></td>
+                        <td><strong><?php echo $row['total']; ?> Br</strong></td>
+                        <td><span class="order-status <?php echo $statusClass; ?>"><?php echo ucfirst($row['status']); ?></span></td>
+                        <td><?php echo date('M d, Y h:i A', strtotime($row['created_at'])); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination">
+            <?php if($pages >= 1 && $page <= $pages): ?>
+                <?php for($i = 1; $i <= $pages; $i++): ?>
+                    <a href="orders.php?page=<?php echo $i; ?>" class="<?php echo $i == $page ? 'active' : ''; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                <?php endfor; ?>
+            <?php endif; ?>
+        </div>
+        <?php else: ?>
+        <div class="empty-state">
+            <i class="fa fa-shopping-cart" style="color:#ddd;"></i>
+            <p>No orders yet.</p>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
 </body>
 </html>

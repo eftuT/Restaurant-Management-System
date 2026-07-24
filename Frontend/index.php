@@ -2,6 +2,12 @@
 session_start();
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
+// Check if image_url column exists, if not add it
+$checkColumn = $conn->query("SHOW COLUMNS FROM food LIKE 'image_url'");
+if($checkColumn->num_rows == 0) {
+    $conn->query("ALTER TABLE food ADD COLUMN image_url VARCHAR(255) AFTER food_description");
+}
+
 $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
 ?>
 <!DOCTYPE html>
@@ -56,14 +62,18 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; max-width: 1100px; margin: 0 auto; }
         .about-text h2 { font-size: 2.5rem; color: #2c1f16; }
         .about-text p { font-size: 1.1rem; color: #3d3d3d; margin-top: 15px; }
+        
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
         .menu-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; border: 1px solid #eee; transition: 0.3s; }
         .menu-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .menu-card .menu-image { width: 100%; height: 200px; background: #e6dccc; display: flex; align-items: center; justify-content: center; font-size: 60px; color: #b45f2b; }
+        .menu-card .menu-image { width: 100%; height: 200px; overflow: hidden; background: #e6dccc; display: flex; align-items: center; justify-content: center; }
+        .menu-card .menu-image img { width: 100%; height: 100%; object-fit: cover; }
+        .menu-card .menu-image .placeholder { font-size: 60px; color: #b45f2b; }
         .menu-card .info { padding: 16px; }
         .menu-card h4 { font-size: 1.2rem; color: #2c1f16; }
         .menu-card .desc { font-size: 0.85rem; color: #666; margin: 4px 0 8px; }
         .menu-card .price { color: #b45f2b; font-weight: 700; font-size: 1.1rem; margin: 6px 0 12px; }
+        
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; max-width: 1000px; margin: 0 auto; padding: 40px 0; }
         .service-item { background: #fff; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eee; }
         .service-item i { font-size: 2.5rem; color: #b45f2b; margin-bottom: 10px; }
@@ -100,6 +110,7 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
                 <a href="index.php" class="active">Home</a>
                 <a href="menu.php">Menu</a>
                 <a href="booking.php">Book Table</a>
+                <a href="reservation.php">Reservation</a>
                 <a href="order.php">Order</a>
                 <a href="contact.php">Contact</a>
             </nav>
@@ -135,9 +146,24 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
     <div class="container">
         <h2 class="section-title">Our Menu</h2>
         <div class="menu-grid">
-            <?php while($row = $featured->fetch_assoc()): ?>
+            <?php while($row = $featured->fetch_assoc()): 
+                // Check if image exists
+                $imagePath = '';
+                if(!empty($row['image_url'])) {
+                    $fullPath = __DIR__ . '/../' . $row['image_url'];
+                    if(file_exists($fullPath)) {
+                        $imagePath = '/Restaurant-Management-System/' . $row['image_url'];
+                    }
+                }
+            ?>
             <div class="menu-card">
-                <div class="menu-image"><i class="fas fa-utensils"></i></div>
+                <div class="menu-image">
+                    <?php if($imagePath): ?>
+                        <img src="<?php echo $imagePath; ?>" alt="<?php echo htmlspecialchars($row['food_name']); ?>">
+                    <?php else: ?>
+                        <div class="placeholder"><i class="fas fa-utensils"></i></div>
+                    <?php endif; ?>
+                </div>
                 <div class="info">
                     <h4><?php echo htmlspecialchars($row['food_name']); ?></h4>
                     <p class="desc"><?php echo htmlspecialchars($row['food_description'] ?? 'Delicious Ethiopian dish'); ?></p>
@@ -193,7 +219,16 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
                     <li><a href="order.php">Order</a></li>
                 </ul>
             </div>
-            
+            <div>
+                <h4>Owners</h4>
+                <ul>
+                    <li>Dibora</li>
+                    <li>Edelawit</li>
+                    <li>Eden</li>
+                    <li>Eftu</li>
+                    <li>Hawi</li>
+                </ul>
+            </div>
             <div>
                 <h4>Contact</h4>
                 <ul>

@@ -1,5 +1,16 @@
 <?php
 session_start();
+
+// Initialize cart if not exists
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Calculate cart total items
+$cart_count = 0;
+foreach ($_SESSION['cart'] as $item) {
+    $cart_count += $item['quantity'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,14 +61,46 @@ session_start();
         .top-bar a:hover { color: #f1c40f; }
         .top-bar .welcome { color: #f1c40f; margin-right: 10px; }
         
+        .cart-badge {
+            position: relative;
+            display: inline-block;
+        }
+        .cart-badge .badge {
+            position: absolute;
+            top: -10px;
+            right: -12px;
+            background: #e74c3c;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 50%;
+            min-width: 20px;
+            text-align: center;
+        }
+        
         .main-header { background: #2c2c2c; padding: 12px 0; border-bottom: 3px solid #b45f2b; }
         .main-header .flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-icon { background: #b45f2b; color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }
         .logo-area h1 { font-size: 2rem; color: #f1c40f; letter-spacing: 2px; }
-        .nav-links { display: flex; gap: 28px; flex-wrap: wrap; }
+        .nav-links { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
         .nav-links a { color: #f0f0f0; font-weight: 500; font-size: 1.05rem; padding: 6px 0; border-bottom: 2px solid transparent; transition: 0.2s; text-decoration: none; }
         .nav-links a:hover, .nav-links a.active { border-bottom-color: #f1c40f; color: #f1c40f; }
+        .nav-links .cart-link { position: relative; }
+        .nav-links .cart-link .badge {
+            position: absolute;
+            top: -8px;
+            right: -14px;
+            background: #e74c3c;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 50%;
+            min-width: 18px;
+            text-align: center;
+        }
         
         .footer { background: #1e1a16; color: #d6cec4; padding: 50px 0 20px; margin-top: 40px; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 30px; }
@@ -206,10 +249,15 @@ session_start();
                 <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Home</a>
                 <a href="menu.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'menu.php' ? 'active' : ''; ?>">Menu</a>
                 <a href="booking.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'booking.php' ? 'active' : ''; ?>">Book Table</a>
-                <a href="reservation.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'reservation.php' ? 'active' : ''; ?>">Reservation</a>
                 <a href="order.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'order.php' ? 'active' : ''; ?>">Order</a>
                 <a href="contact.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'contact.php' ? 'active' : ''; ?>">Contact</a>
                 <a href="about.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'active' : ''; ?>">About</a>
+                <a href="cart.php" class="cart-link <?php echo basename($_SERVER['PHP_SELF']) == 'cart.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-shopping-cart"></i> Cart
+                    <?php if($cart_count > 0): ?>
+                        <span class="badge"><?php echo $cart_count; ?></span>
+                    <?php endif; ?>
+                </a>
             </nav>
         </div>
     </div>

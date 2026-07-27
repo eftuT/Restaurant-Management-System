@@ -11,7 +11,7 @@ if($checkColumn->num_rows == 0) {
 $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
 ?>
 
-<!-- HERO - CENTERED WITH BEIGE/CREAM THEME -->
+<!-- HERO -->
 <section class="hero">
     <div class="hero-content">
         <div class="hero-badge">✦ Authentic Ethiopian Cuisine</div>
@@ -50,7 +50,9 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
                     <h4><?php echo htmlspecialchars($row['food_name']); ?></h4>
                     <p class="desc"><?php echo htmlspecialchars($row['food_description'] ?? 'Delicious Ethiopian dish'); ?></p>
                     <div class="price"><?php echo $row['food_price']; ?> Br</div>
-                    <a href="order.php?item=<?php echo $row['id']; ?>" class="btn" style="font-size:0.9rem;padding:8px 22px;">Order Now</a>
+                    <a href="order.php?add_to_cart=<?php echo $row['id']; ?>" class="btn" style="font-size:0.9rem;padding:8px 22px;">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
                 </div>
             </div>
             <?php endwhile; ?>

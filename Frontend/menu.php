@@ -17,7 +17,6 @@ while($row = $menuItems->fetch_assoc()) {
     $categories[$row['food_category']][] = $row;
 }
 
-// Define category icons and names
 $categoryIcons = [
     'breakfast' => 'fa-sun',
     'lunch' => 'fa-utensils',
@@ -100,7 +99,9 @@ $order = ['breakfast', 'lunch', 'dinner', 'beverage', 'snack', 'dessert'];
                             <h4><?php echo htmlspecialchars($item['food_name']); ?></h4>
                             <p class="desc"><?php echo htmlspecialchars($item['food_description'] ?? 'Delicious Ethiopian dish'); ?></p>
                             <div class="price"><?php echo $item['food_price']; ?> Br</div>
-                            <a href="order.php?item=<?php echo $item['id']; ?>" class="btn" style="font-size:0.9rem;padding:8px 22px;">Order Now</a>
+                            <a href="order.php?add_to_cart=<?php echo $item['id']; ?>" class="btn" style="font-size:0.9rem;padding:8px 22px;">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </a>
                         </div>
                     </div>
                     <?php endforeach; ?>

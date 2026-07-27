@@ -2,7 +2,7 @@
 session_start();
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// Check if image_url column exists, if not add it
+// Check if image_url column exists
 $checkColumn = $conn->query("SHOW COLUMNS FROM food LIKE 'image_url'");
 if($checkColumn->num_rows == 0) {
     $conn->query("ALTER TABLE food ADD COLUMN image_url VARCHAR(255) AFTER food_description");
@@ -22,8 +22,36 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: #fefcf3; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .btn { display: inline-block; background: #b45f2b; color: #fff; padding: 12px 30px; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; transition: 0.3s; font-size: 1rem; text-decoration: none; }
-        .btn:hover { background: #8a471f; transform: scale(1.03); }
+        .btn { 
+            display: inline-block; 
+            background: #b45f2b; 
+            color: #fff; 
+            padding: 14px 40px; 
+            border-radius: 50px; 
+            font-weight: 600; 
+            border: none; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-size: 1rem; 
+            text-decoration: none; 
+            letter-spacing: 0.5px;
+        }
+        .btn:hover { 
+            background: #8a471f; 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(180,95,43,0.3);
+        }
+        .btn-outline { 
+            background: transparent; 
+            border: 2px solid #b45f2b; 
+            color: #b45f2b; 
+            padding: 12px 38px;
+        }
+        .btn-outline:hover { 
+            background: #b45f2b; 
+            color: #fff; 
+            box-shadow: 0 10px 30px rgba(180,95,43,0.3);
+        }
         
         .top-bar { background: #1a1a1a; color: #eee; padding: 8px 0; }
         .top-bar .flex { display: flex; justify-content: flex-end; gap: 15px; align-items: center; flex-wrap: wrap; }
@@ -55,14 +83,80 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
         .section-title { text-align: center; font-size: 2.4rem; font-weight: 600; margin: 50px 0 30px; color: #2c1f16; position: relative; }
         .section-title:after { content: ''; display: block; width: 80px; height: 4px; background: #b45f2b; margin: 10px auto 0; }
         
-        .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), #2c1f16; min-height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; padding: 40px 20px; }
-        .hero-content h1 { font-size: 3.8rem; font-weight: 700; text-shadow: 3px 3px 8px rgba(0,0,0,0.7); }
-        .hero-content p { font-size: 1.5rem; max-width: 700px; margin: 18px auto 30px; color: #f5e6c8; }
-        .about-section { padding: 60px 20px; background: #f7f2e9; }
-        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; max-width: 1100px; margin: 0 auto; }
-        .about-text h2 { font-size: 2.5rem; color: #2c1f16; }
-        .about-text p { font-size: 1.1rem; color: #3d3d3d; margin-top: 15px; }
+        /* ===== CENTERED HERO - BEIGE/CREAM THEME ===== */
+        .hero {
+            background: linear-gradient(135deg, #f7f2e9 0%, #fefcf3 50%, #f5ede3 100%);
+            padding: 100px 20px;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(180,95,43,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(241,196,15,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+        .hero-content .hero-badge {
+            display: inline-block;
+            background: rgba(180,95,43,0.08);
+            color: #b45f2b;
+            padding: 6px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .hero-content h1 { 
+            font-size: 4.5rem; 
+            font-weight: 700; 
+            color: #2c1f16; 
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+        .hero-content h1 span { 
+            color: #b45f2b; 
+        }
+        .hero-content .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 600px;
+            margin: 15px auto 35px;
+            line-height: 1.8;
+        }
+        .hero-content .btn-group { 
+            display: flex; 
+            gap: 18px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
         
+        /* ===== MENU GRID ===== */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
         .menu-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; border: 1px solid #eee; transition: 0.3s; }
         .menu-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
@@ -79,11 +173,21 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
         .service-item i { font-size: 2.5rem; color: #b45f2b; margin-bottom: 10px; }
         .service-item h4 { color: #2c1f16; }
         
-        @media (max-width: 800px) { .about-grid { grid-template-columns: 1fr; } .hero-content h1 { font-size: 2.8rem; } }
+        @media (max-width: 800px) {
+            .hero-content h1 { font-size: 3rem; }
+            .hero-content .subtitle { font-size: 1.1rem; }
+        }
+        @media (max-width: 500px) {
+            .hero { padding: 60px 20px; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content .subtitle { font-size: 1rem; }
+            .btn { padding: 12px 28px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="top-bar">
     <div class="container">
         <div class="flex">
@@ -99,6 +203,7 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
     </div>
 </div>
 
+<!-- HEADER -->
 <header class="main-header">
     <div class="container">
         <div class="flex">
@@ -118,48 +223,37 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
     </div>
 </header>
 
+<!-- HERO - CENTERED WITH BEIGE/CREAM THEME -->
 <section class="hero">
     <div class="hero-content">
-        <h1>Welcome to SEN'Q</h1>
-        <p>Traditional Ethiopian flavors — served with love, just like home.</p>
-        <a href="menu.php" class="btn">Explore Menu</a>
-    </div>
-</section>
-
-<section class="about-section">
-    <div class="about-grid">
-        <div class="about-text">
-            <h2>About SEN'Q</h2>
-            <p><strong>SEN'Q</strong> is a collection of food in a traditional container called <em>Agelgil</em>. It's the meal shared by farmers during harvest, by travelers on long journeys — a symbol of togetherness and Ethiopian heritage.</p>
-            <p style="margin-top:12px;">We bring that warmth to your table, every day.</p>
-            <a href="booking.php" class="btn" style="margin-top:20px;display:inline-block;">Book a Table</a>
-        </div>
-        <div class="about-image">
-            <div style="background:#e6dccc;height:300px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:80px;color:#b45f2b;">
-                <i class="fas fa-utensils"></i>
-            </div>
+        <div class="hero-badge">✦ Authentic Ethiopian Cuisine</div>
+        <h1>Welcome to <br><span>SEN'Q</span> Restaurant</h1>
+        <p class="subtitle">Traditional Ethiopian flavors — served with love, just like home. Explore our authentic dishes made from the freshest ingredients.</p>
+        <div class="btn-group">
+            <a href="menu.php" class="btn"><i class="fas fa-utensils"></i> Explore Menu</a>
+            <a href="booking.php" class="btn btn-outline"><i class="fas fa-calendar-check"></i> Book a Table</a>
         </div>
     </div>
 </section>
 
+<!-- MENU PREVIEW -->
 <section style="padding:60px 20px;">
     <div class="container">
         <h2 class="section-title">Our Menu</h2>
         <div class="menu-grid">
             <?php while($row = $featured->fetch_assoc()): 
-                // Check if image exists
-                $imagePath = '';
+                $imageSrc = '';
                 if(!empty($row['image_url'])) {
-                    $fullPath = __DIR__ . '/../' . $row['image_url'];
-                    if(file_exists($fullPath)) {
-                        $imagePath = '/Restaurant-Management-System/' . $row['image_url'];
+                    $imagePath = __DIR__ . '/../' . $row['image_url'];
+                    if(file_exists($imagePath)) {
+                        $imageSrc = '/Restaurant-Management-System/' . $row['image_url'];
                     }
                 }
             ?>
             <div class="menu-card">
                 <div class="menu-image">
-                    <?php if($imagePath): ?>
-                        <img src="<?php echo $imagePath; ?>" alt="<?php echo htmlspecialchars($row['food_name']); ?>">
+                    <?php if($imageSrc): ?>
+                        <img src="<?php echo $imageSrc; ?>" alt="<?php echo htmlspecialchars($row['food_name']); ?>">
                     <?php else: ?>
                         <div class="placeholder"><i class="fas fa-utensils"></i></div>
                     <?php endif; ?>
@@ -179,6 +273,7 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
     </div>
 </section>
 
+<!-- SERVICES -->
 <section style="padding:40px 0;background:#f7f2e9;">
     <div class="container">
         <h2 class="section-title">Our Services</h2>
@@ -207,6 +302,7 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
     </div>
 </section>
 
+<!-- FOOTER -->
 <footer class="footer">
     <div class="container">
         <div class="footer-grid">
@@ -219,7 +315,16 @@ $featured = $conn->query("SELECT * FROM food WHERE is_available = 1 LIMIT 4");
                     <li><a href="order.php">Order</a></li>
                 </ul>
             </div>
-          
+            <div>
+                <h4>Owners</h4>
+                <ul>
+                    <li>Dibora</li>
+                    <li>Edelawit</li>
+                    <li>Eden</li>
+                    <li>Eftu</li>
+                    <li>Hawi</li>
+                </ul>
+            </div>
             <div>
                 <h4>Contact</h4>
                 <ul>

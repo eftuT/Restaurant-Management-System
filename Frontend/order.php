@@ -2,6 +2,43 @@
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
+// ===== ADD TO CART FUNCTIONALITY =====
+if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
+    $item_id = (int)$_GET['add_to_cart'];
+    $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
+    
+    $stmt = $conn->prepare("SELECT * FROM food WHERE id = ? AND is_available = 1");
+    $stmt->bind_param("i", $item_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $item = $result->fetch_assoc();
+        
+        $found = false;
+        foreach ($_SESSION['cart'] as &$cart_item) {
+            if ($cart_item['id'] == $item_id) {
+                $cart_item['quantity'] += $quantity;
+                $found = true;
+                break;
+            }
+        }
+        
+        if (!$found) {
+            $_SESSION['cart'][] = [
+                'id' => $item['id'],
+                'name' => $item['food_name'],
+                'price' => $item['food_price'],
+                'quantity' => $quantity,
+                'image' => $item['image_url'] ?? ''
+            ];
+        }
+    }
+    header('Location: cart.php');
+    exit;
+}
+// ===== END ADD TO CART =====
+
 $error = '';
 $success = '';
 $menu_items = $conn->query("SELECT * FROM food WHERE is_available = 1");
@@ -72,6 +109,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt2->bind_param("isi", $order_id, $item['name'], $item['quantity']);
                 $stmt2->execute();
             }
+            // Clear cart after order
+            $_SESSION['cart'] = [];
             $success = 'Order placed successfully! Total: ' . $total . ' Br';
         } else {
             $error = 'Order failed. Please try again.';

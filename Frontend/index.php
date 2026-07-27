@@ -1,12 +1,8 @@
 <?php
-// ============================================================
-// SESSION IS ALREADY STARTED IN HEADER.PHP
-// DO NOT START SESSION HERE AGAIN!
-// ============================================================
+
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// Check if image_url column exists
 $checkColumn = $conn->query("SHOW COLUMNS FROM food LIKE 'image_url'");
 if($checkColumn->num_rows == 0) {
     $conn->query("ALTER TABLE food ADD COLUMN image_url VARCHAR(255) AFTER food_description");

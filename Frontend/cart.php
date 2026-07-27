@@ -1,15 +1,9 @@
 <?php
-// ============================================================
-// NO session_start() HERE - IT'S ALREADY IN HEADER.PHP
-// ============================================================
 
-// ===== CART REDIRECT LOGIC (BEFORE HEADER) =====
-// Update quantity
 if (isset($_GET['update']) && is_numeric($_GET['update'])) {
     $item_id = (int)$_GET['update'];
     $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
     
-    // Initialize cart if not exists
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
@@ -34,7 +28,6 @@ if (isset($_GET['update']) && is_numeric($_GET['update'])) {
     exit;
 }
 
-// Remove item from cart
 if (isset($_GET['remove']) && is_numeric($_GET['remove'])) {
     $remove_id = (int)$_GET['remove'];
     if (!isset($_SESSION['cart'])) {
@@ -49,28 +42,20 @@ if (isset($_GET['remove']) && is_numeric($_GET['remove'])) {
     $_SESSION['cart'] = array_values($_SESSION['cart']);
     header('Location: cart.php');
     exit;
-}
 
-// Clear cart
 if (isset($_GET['clear'])) {
     $_SESSION['cart'] = [];
     header('Location: cart.php');
     exit;
 }
-// ===== END CART REDIRECT LOGIC =====
 
-// ============================================================
-// NOW INCLUDE HEADER - AFTER ALL REDIRECTS
-// ============================================================
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// Initialize cart if not exists
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Calculate total
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
     $total += $item['price'] * $item['quantity'];

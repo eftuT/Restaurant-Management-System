@@ -58,8 +58,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="contact-info">
                 <h3>Get in touch</h3>
                 <p><i class="fas fa-phone-alt"></i> +251 924 950 125</p>
-                <p><i class="fas fa-phone-alt"></i> +251 924 950 125</p>
-                <p><i class="fas fa-map-marker-alt"></i> Ethiopia, Addis Ababa, Kasaches</p>
+                <p><i class="fas fa-map-marker-alt"></i> Ethiopia, Addis Ababa</p>
                 <p><i class="fas fa-clock"></i> Mon–Sun: 7:00 AM – 9:00 PM</p>
                 
                 <div style="margin-top:30px;">
@@ -71,16 +70,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
 
-                <div style="margin-top:30px;">
-                    <h4 style="color:#2c1f16;margin-bottom:10px;">Owners</h4>
-                    <ul style="list-style:none;">
-                        <li>Dibora</li>
-                        <li>Edelawit</li>
-                        <li>Eden</li>
-                        <li>Eftu</li>
-                        <li>Hawi</li>
-                    </ul>
-                </div>
+                
             </div>
 
             <div class="contact-form">

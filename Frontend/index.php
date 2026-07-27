@@ -1,4 +1,8 @@
 <?php
+session_start();
+
+// Any redirect logic here (none needed for index)
+
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 

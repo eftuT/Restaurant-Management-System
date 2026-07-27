@@ -1,12 +1,21 @@
 <?php
-// NO session_start() here - it's already in header.php
-require_once 'includes/header.php';
+// ============================================================
+// NO session_start() HERE - IT'S ALREADY IN HEADER.PHP
+// ============================================================
+
+// Include database first
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// ===== ADD TO CART FUNCTIONALITY =====
+// ===== ADD TO CART - MUST BE BEFORE HEADER =====
+// Check if add_to_cart is in URL
 if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
     $item_id = (int)$_GET['add_to_cart'];
     $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
+    
+    // Initialize cart if not exists
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
     
     $stmt = $conn->prepare("SELECT * FROM food WHERE id = ? AND is_available = 1");
     $stmt->bind_param("i", $item_id);
@@ -35,10 +44,16 @@ if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
             ];
         }
     }
+    
     header('Location: cart.php');
     exit;
 }
 // ===== END ADD TO CART =====
+
+// ============================================================
+// NOW INCLUDE HEADER - AFTER ALL REDIRECTS
+// ============================================================
+require_once 'includes/header.php';
 
 $error = '';
 $success = '';

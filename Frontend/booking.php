@@ -1,4 +1,5 @@
 <?php
+// NO session_start() here - it's in header.php
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
@@ -104,10 +105,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <form method="POST" action="">
                     <label>Full name *</label>
-                    <input type="text" name="full_name" placeholder="Enter your name" required value="<?php echo $_SESSION['user_name'] ?? ''; ?>">
+                    <input type="text" name="full_name" placeholder="Enter your name" required value="<?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : ''; ?>">
 
                     <label>Email *</label>
-                    <input type="email" name="email" placeholder="Enter your email" required value="<?php echo $_SESSION['user_email'] ?? ''; ?>">
+                    <input type="email" name="email" placeholder="Enter your email" required value="<?php echo isset($_SESSION['user_email']) ? $_SESSION['user_email'] : ''; ?>">
 
                     <label>Phone number *</label>
                     <input type="tel" name="phone" placeholder="Enter phone number" required>

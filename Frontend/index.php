@@ -1,8 +1,8 @@
 <?php
-session_start();
-
-// Any redirect logic here (none needed for index)
-
+// ============================================================
+// SESSION IS ALREADY STARTED IN HEADER.PHP
+// DO NOT START SESSION HERE AGAIN!
+// ============================================================
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 

@@ -11,16 +11,7 @@
                     <li><a href="order.php">Order</a></li>
                 </ul>
             </div>
-            <div>
-                <h4>Owners</h4>
-                <ul>
-                    <li>Dibora</li>
-                    <li>Edelawit</li>
-                    <li>Eden</li>
-                    <li>Eftu</li>
-                    <li>Hawi</li>
-                </ul>
-            </div>
+            
             <div>
                 <h4>Contact</h4>
                 <ul>

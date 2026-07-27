@@ -1,5 +1,4 @@
 <?php
-// NO session_start() here - it's in header.php
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 ?>

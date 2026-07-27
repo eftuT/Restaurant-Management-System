@@ -42,6 +42,7 @@ if (isset($_GET['remove']) && is_numeric($_GET['remove'])) {
     $_SESSION['cart'] = array_values($_SESSION['cart']);
     header('Location: cart.php');
     exit;
+}
 
 if (isset($_GET['clear'])) {
     $_SESSION['cart'] = [];

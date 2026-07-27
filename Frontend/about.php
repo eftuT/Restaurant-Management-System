@@ -4,27 +4,219 @@ require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.p
 ?>
 
 <style>
-    .about-page { padding: 40px 0; }
-    .about-hero { background: linear-gradient(135deg, #f7f2e9 0%, #fefcf3 50%, #f5ede3 100%); padding: 60px 20px; text-align: center; border-radius: 20px; margin-bottom: 40px; }
-    .about-hero h1 { font-size: 3rem; color: #2c1f16; margin-bottom: 10px; }
+    .about-page { 
+        padding: 20px 0 40px 0;  /* Consistent with other pages */
+    }
+    .about-page .section-title {
+        margin-top: 0;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 2rem;
+        color: #2c1f16;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    /* Brown line under section titles */
+    .about-page .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: #b45f2b;
+    }
+    
+    .about-hero { 
+        background: linear-gradient(135deg, #f7f2e9 0%, #fefcf3 50%, #f5ede3 100%); 
+        padding: 50px 20px; 
+        text-align: center; 
+        border-radius: 20px; 
+        margin-bottom: 35px;  /* Reduced from 40px */
+    }
+    .about-hero h1 { 
+        font-size: 2.8rem; 
+        color: #2c1f16; 
+        margin-bottom: 10px; 
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+    .about-hero h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: #b45f2b;
+    }
     .about-hero h1 span { color: #b45f2b; }
-    .about-hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; color: #666; }
-    .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-    .about-content .text h2 { font-size: 2rem; color: #2c1f16; margin-bottom: 20px; }
-    .about-content .text p { color: #555; margin-bottom: 15px; line-height: 1.8; }
-    .about-content .image { background: #e6dccc; height: 400px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 80px; color: #b45f2b; }
-    .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; }
-    .value-card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; border: 1px solid #eee; transition: 0.3s; }
-    .value-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .value-card i { font-size: 3rem; color: #b45f2b; margin-bottom: 15px; }
-    .value-card h4 { font-size: 1.2rem; color: #2c1f16; margin-bottom: 10px; }
-    .value-card p { color: #666; font-size: 0.95rem; }
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 40px; }
-    .team-card { background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; border: 1px solid #eee; }
-    .team-card .avatar { width: 100px; height: 100px; border-radius: 50%; background: #b45f2b; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #fff; font-weight: bold; }
-    .team-card h4 { color: #2c1f16; }
-    .team-card p { color: #999; font-size: 0.85rem; }
-    @media (max-width: 800px) { .about-content { grid-template-columns: 1fr; } .about-hero h1 { font-size: 2rem; } }
+    .about-hero p { 
+        font-size: 1.1rem; 
+        max-width: 700px; 
+        margin: 15px auto 0; 
+        color: #666; 
+    }
+    
+    .about-content { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 40px; 
+        align-items: center; 
+        margin-bottom: 50px;
+    }
+    .about-content .text h2 { 
+        font-size: 1.8rem; 
+        color: #2c1f16; 
+        margin-bottom: 15px; 
+        position: relative;
+        padding-bottom: 12px;
+    }
+    .about-content .text h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #b45f2b;
+    }
+    .about-content .text p { 
+        color: #555; 
+        margin-bottom: 12px; 
+        line-height: 1.8; 
+    }
+    .about-content .text .btn {
+        margin-top: 15px;
+        display: inline-block;
+    }
+    .about-content .image { 
+        background: #e6dccc; 
+        height: 400px; 
+        border-radius: 20px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        overflow: hidden;
+        position: relative;
+    }
+    .about-content .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .about-content .image .placeholder {
+        font-size: 80px; 
+        color: #b45f2b;
+        text-align: center;
+    }
+    .about-content .image .placeholder i {
+        display: block;
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+    .about-content .image .placeholder span {
+        display: block;
+        font-size: 14px;
+        color: #8a7a6a;
+        font-weight: 500;
+    }
+    
+    .values-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+        gap: 25px; 
+        margin-top: 30px; 
+        margin-bottom: 50px;
+    }
+    .value-card { 
+        background: #fff; 
+        padding: 25px; 
+        border-radius: 15px; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06); 
+        text-align: center; 
+        border: 1px solid #eee; 
+        transition: 0.3s; 
+    }
+    .value-card:hover { 
+        transform: translateY(-5px); 
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1); 
+    }
+    .value-card i { 
+        font-size: 2.5rem; 
+        color: #b45f2b; 
+        margin-bottom: 12px; 
+    }
+    .value-card h4 { 
+        font-size: 1.1rem; 
+        color: #2c1f16; 
+        margin-bottom: 8px; 
+    }
+    .value-card p { 
+        color: #666; 
+        font-size: 0.9rem; 
+        line-height: 1.6;
+    }
+    
+    .team-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+        gap: 25px; 
+        margin-top: 30px; 
+    }
+    .team-card { 
+        background: #fff; 
+        padding: 20px; 
+        border-radius: 15px; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06); 
+        text-align: center; 
+        border: 1px solid #eee; 
+        transition: 0.3s;
+    }
+    .team-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    .team-card .avatar { 
+        width: 80px; 
+        height: 80px; 
+        border-radius: 50%; 
+        background: #b45f2b; 
+        margin: 0 auto 12px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 32px; 
+        color: #fff; 
+        font-weight: bold; 
+    }
+    .team-card h4 { 
+        color: #2c1f16; 
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    .team-card p { 
+        color: #999; 
+        font-size: 0.8rem; 
+    }
+    
+    @media (max-width: 800px) { 
+        .about-content { 
+            grid-template-columns: 1fr; 
+        }
+        .about-hero h1 { 
+            font-size: 2rem; 
+        }
+        .about-content .image { 
+            height: 250px; 
+        }
+        .about-page .section-title {
+            font-size: 1.6rem;
+        }
+    }
 </style>
 
 <section class="about-page">
@@ -40,11 +232,14 @@ require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.p
                 <p>The word <strong>SEN'Q</strong> is a collection of food put in a special container called <strong>AGELGIL</strong>. It is mainly practiced in the rural areas of Ethiopia to deliver food for farmers specifically who work in a team for crop gathering.</p>
                 <p>At lunchtime, their wives come with food inside Agelgil which is called <strong>SEN'Q</strong> and also with a traditional drink called Tela. Not only for farmers, it is also used for a person who will travel long way by foot. When he gets tired, he will rest and eat his SEN'Q whose mother or wife made it.</p>
                 <p>We bring that warmth to your table, every day. Our restaurant is dedicated to preserving this beautiful Ethiopian tradition and sharing it with the world.</p>
-                <a href="menu.php" class="btn" style="margin-top:20px;">Explore Our Menu</a>
+                <a href="menu.php" class="btn" style="margin-top:15px;display:inline-block;">
+                    <i class="fas fa-utensils"></i> Explore Our Menu
+                </a>
             </div>
             <div class="image">
-                <i class="fas fa-utensils"></i>
-            </div>
+    <img src="https://i.pinimg.com/736x/3f/80/3a/3f803ab404ce1623abe3986a0c1c70e1.jpg" 
+         alt="Traditional Ethiopian Food">
+</div>
         </div>
 
         <h2 class="section-title">Our Values</h2>
@@ -80,7 +275,7 @@ require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.p
             </div>
             <div class="team-card">
                 <div class="avatar">E</div>
-                <h4>Edelawit</h4>
+                <h4>Edlawit</h4>
                 <p>Manager</p>
             </div>
             <div class="team-card">

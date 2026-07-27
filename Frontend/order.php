@@ -1,18 +1,12 @@
 <?php
-// ============================================================
-// NO session_start() HERE - IT'S ALREADY IN HEADER.PHP
-// ============================================================
 
-// Include database first
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// ===== ADD TO CART - MUST BE BEFORE HEADER =====
-// Check if add_to_cart is in URL
+
 if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
     $item_id = (int)$_GET['add_to_cart'];
     $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
     
-    // Initialize cart if not exists
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
@@ -48,11 +42,7 @@ if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
     header('Location: cart.php');
     exit;
 }
-// ===== END ADD TO CART =====
 
-// ============================================================
-// NOW INCLUDE HEADER - AFTER ALL REDIRECTS
-// ============================================================
 require_once 'includes/header.php';
 
 $error = '';
@@ -125,7 +115,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt2->bind_param("isi", $order_id, $item['name'], $item['quantity']);
                 $stmt2->execute();
             }
-            // Clear cart after order
             $_SESSION['cart'] = [];
             $success = 'Order placed successfully! Total: ' . $total . ' Br';
         } else {

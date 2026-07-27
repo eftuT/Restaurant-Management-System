@@ -5,48 +5,9 @@
 
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
-// ===== ADD TO CART - MUST BE BEFORE HEADER =====
-if (isset($_GET['add_to_cart']) && is_numeric($_GET['add_to_cart'])) {
-    $item_id = (int)$_GET['add_to_cart'];
-    $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
-    
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-    
-    $stmt = $conn->prepare("SELECT * FROM food WHERE id = ? AND is_available = 1");
-    $stmt->bind_param("i", $item_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        $item = $result->fetch_assoc();
-        
-        $found = false;
-        foreach ($_SESSION['cart'] as &$cart_item) {
-            if ($cart_item['id'] == $item_id) {
-                $cart_item['quantity'] += $quantity;
-                $found = true;
-                break;
-            }
-        }
-        
-        if (!$found) {
-            $_SESSION['cart'][] = [
-                'id' => $item['id'],
-                'name' => $item['food_name'],
-                'price' => $item['food_price'],
-                'quantity' => $quantity,
-                'image' => $item['image_url'] ?? ''
-            ];
-        }
-    }
-    
-    header('Location: cart.php');
-    exit;
-}
-// ===== END ADD TO CART =====
-
+// ============================================================
+// NOW INCLUDE HEADER - AFTER ALL REDIRECTS
+// ============================================================
 require_once 'includes/header.php';
 
 $error = '';
@@ -165,8 +126,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <style>
     .order-page { padding: 40px 0; }
-    
-    /* ===== TITLE WITH BROWN LINE ===== */
     .order-page h2 { 
         text-align: center; 
         font-size: 2.4rem; 
@@ -191,7 +150,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     .order-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
     
-    /* ===== ALERTS ===== */
     .alert {
         padding: 14px 18px;
         border-radius: 12px;
@@ -232,10 +190,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     .alert-close:hover { opacity: 1; }
     
-    /* ===== ORDER FORM ===== */
     .order-form { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
     
-    /* ===== CATEGORY ACCORDION ===== */
     .category-accordion { margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #f0ebe3; }
     .category-header {
         background: #faf8f5;
@@ -354,7 +310,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         line-height: 22px;
     }
     
-    /* ===== 2-COLUMN DELIVERY FORM ===== */
     .form-row-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -406,7 +361,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     .order-form .btn i { margin-right: 8px; }
     
-    /* ===== ORDER SUMMARY - COMPACT ===== */
     .order-summary { 
         background: #f7f2e9; 
         padding: 18px 20px; 
@@ -508,7 +462,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Place Your Order</h2>
         <p class="subtitle">Select your favorite Ethiopian dishes and customize your order</p>
         
-        <!-- ===== ALERTS (PERSISTENT) ===== -->
         <?php if($success): ?>
             <div class="alert alert-success" id="successAlert">
                 <i class="fas fa-check-circle"></i> 

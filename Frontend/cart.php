@@ -1,5 +1,58 @@
 <?php
+// ============================================================
+// ALL REDIRECT LOGIC MUST GO HERE - BEFORE ANY OUTPUT
+// ============================================================
 
+// Start session first
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
+
+// ===== ADD TO CART =====
+if (isset($_GET['add']) && is_numeric($_GET['add'])) {
+    $item_id = (int)$_GET['add'];
+    $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
+    
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+    
+    $stmt = $conn->prepare("SELECT * FROM food WHERE id = ? AND is_available = 1");
+    $stmt->bind_param("i", $item_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $item = $result->fetch_assoc();
+        
+        $found = false;
+        foreach ($_SESSION['cart'] as &$cart_item) {
+            if ($cart_item['id'] == $item_id) {
+                $cart_item['quantity'] += $quantity;
+                $found = true;
+                break;
+            }
+        }
+        
+        if (!$found) {
+            $_SESSION['cart'][] = [
+                'id' => $item['id'],
+                'name' => $item['food_name'],
+                'price' => $item['food_price'],
+                'quantity' => $quantity,
+                'image' => $item['image_url'] ?? ''
+            ];
+        }
+    }
+    
+    header('Location: cart.php');
+    exit;
+}
+// ===== END ADD TO CART =====
+
+// ===== UPDATE QUANTITY =====
 if (isset($_GET['update']) && is_numeric($_GET['update'])) {
     $item_id = (int)$_GET['update'];
     $quantity = isset($_GET['qty']) ? (int)$_GET['qty'] : 1;
@@ -28,6 +81,7 @@ if (isset($_GET['update']) && is_numeric($_GET['update'])) {
     exit;
 }
 
+// ===== REMOVE ITEM =====
 if (isset($_GET['remove']) && is_numeric($_GET['remove'])) {
     $remove_id = (int)$_GET['remove'];
     if (!isset($_SESSION['cart'])) {
@@ -44,19 +98,25 @@ if (isset($_GET['remove']) && is_numeric($_GET['remove'])) {
     exit;
 }
 
+// ===== CLEAR CART =====
 if (isset($_GET['clear'])) {
     $_SESSION['cart'] = [];
     header('Location: cart.php');
     exit;
 }
+// ===== END CART LOGIC =====
 
+// ============================================================
+// NOW INCLUDE HEADER - AFTER ALL REDIRECTS
+// ============================================================
 require_once 'includes/header.php';
-require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
+// Initialize cart if not exists
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
+// Calculate total
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
     $total += $item['price'] * $item['quantity'];
@@ -65,6 +125,27 @@ foreach ($_SESSION['cart'] as $item) {
 
 <style>
     .cart-page { padding: 40px 0; }
+    .cart-page h2 { 
+        text-align: center; 
+        font-size: 2.4rem; 
+        color: #2c1f16; 
+        margin-bottom: 10px; 
+        position: relative;
+    }
+    .cart-page h2:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #b45f2b;
+        margin: 10px auto 0;
+    }
+    .cart-page .subtitle { 
+        text-align: center; 
+        color: #666; 
+        margin-bottom: 40px; 
+        font-size: 1rem;
+    }
     .cart-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
     .cart-table th { background: #f8f9fa; padding: 15px; text-align: left; font-weight: 600; }
     .cart-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
@@ -85,7 +166,8 @@ foreach ($_SESSION['cart'] as $item) {
 
 <section class="cart-page">
     <div class="container">
-        <h2 class="section-title">Your Cart</h2>
+        <h2>Your Cart</h2>
+        <p class="subtitle">Review your items before checkout</p>
 
         <?php if (empty($_SESSION['cart'])): ?>
             <div class="empty-cart">
@@ -135,7 +217,7 @@ foreach ($_SESSION['cart'] as $item) {
                         <i class="fas fa-trash"></i> Clear Cart
                     </a>
                     <a href="menu.php" class="btn btn-outline">
-                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                        <i class="fas fa-arrow-left"></i> Continue Ordering
                     </a>
                     <a href="order.php" class="btn">
                         <i class="fas fa-shopping-cart"></i> Proceed to Checkout

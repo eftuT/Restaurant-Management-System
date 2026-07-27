@@ -27,7 +27,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             phone VARCHAR(20) NOT NULL,
             date_res DATE NOT NULL,
             time TIME NOT NULL,
-            table_type VARCHAR(50),
             suggestions TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )");
@@ -36,10 +35,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fname = $name_parts[0];
         $lname = $name_parts[1] ?? '';
         
-        $sql = "INSERT INTO reservation (fname, lname, guest, email, phone, date_res, time, table_type, suggestions) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO reservation (fname, lname, guest, email, phone, date_res, time, suggestions) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssissssss", $fname, $lname, $guests, $email, $phone, $booking_date, $booking_time, $table_type, $requests);
+        $stmt->bind_param("ssisssss", $fname, $lname, $guests, $email, $phone, $booking_date, $booking_time, $requests);
         
         if($stmt->execute()) {
             $success = 'Booking confirmed! We will contact you shortly.';
@@ -52,33 +51,99 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <style>
     .booking-page { 
-        padding: 20px 0 40px 0;  /* Reduced top padding from 40px to 20px */
+        padding: 20px 0 40px 0;
     }
     .booking-page .section-title {
-        margin-top: 0;  /* Remove top margin */
-        margin-bottom: 30px;
+        margin-top: 0;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 2rem;
+        color: #2c1f16;
+        position: relative;
+        padding-bottom: 15px;
     }
-    .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
-    .booking-info { background: #2c1f16; color: #fff; padding: 40px; border-radius: 20px; }
-    .booking-info h3 { color: #f1c40f; margin-bottom: 20px; font-size: 1.8rem; }
-    .booking-info ul { list-style: none; padding: 0; }
-    .booking-info ul li { padding: 10px 0; border-bottom: 1px solid #3d322a; }
-    .booking-info ul li:last-child { border-bottom: none; }
-    .booking-form { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
-    .booking-form h3 { margin-bottom: 25px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .form-group { margin-bottom: 15px; }
-    .form-group.full-width { grid-column: 1 / -1; }
-    .booking-form label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
-    .booking-form label .required { color: #e74c3c; }
+    .booking-page .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: #b45f2b;
+    }
+    
+    .booking-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 30px;
+        align-items: start; 
+    }
+    .booking-info { 
+        background: #2c1f16; 
+        color: #fff; 
+        padding: 30px;
+        border-radius: 16px;
+    }
+    .booking-info h3 { 
+        color: #f1c40f; 
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+    }
+    .booking-info ul { 
+        list-style: none; 
+        padding: 0; 
+    }
+    .booking-info ul li { 
+        padding: 8px 0;
+        border-bottom: 1px solid #3d322a; 
+        font-size: 0.9rem;
+    }
+    .booking-info ul li:last-child { 
+        border-bottom: none; 
+    }
+    .booking-info p {
+        font-size: 0.9rem;
+    }
+    
+    .booking-form { 
+        background: #fff; 
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .booking-form h3 { 
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+    }
+    .form-row { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 12px;
+    }
+    .form-group { 
+        margin-bottom: 10px;
+    }
+    .form-group.full-width { 
+        grid-column: 1 / -1; 
+    }
+    .booking-form label { 
+        display: block; 
+        font-weight: 600; 
+        margin-bottom: 3px;
+        font-size: 13px;
+    }
+    .booking-form label .required { 
+        color: #e74c3c; 
+    }
     .booking-form input, 
     .booking-form select, 
     .booking-form textarea { 
         width: 100%; 
-        padding: 10px 14px; 
+        padding: 8px 12px;
         border: 2px solid #e0e0e0; 
-        border-radius: 8px; 
-        font-size: 14px; 
+        border-radius: 6px;
+        font-size: 13px;
         transition: 0.3s; 
         background: #fafafa;
     }
@@ -87,19 +152,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     .booking-form textarea:focus { 
         border-color: #b45f2b; 
         outline: none; 
-        box-shadow: 0 0 0 3px rgba(180,95,43,0.1);
+        box-shadow: 0 0 0 3px rgba(180,95,43,0.08);
         background: #fff;
     }
-    .booking-form textarea { resize: vertical; min-height: 80px; }
+    .booking-form textarea { 
+        resize: vertical; 
+        min-height: 50px;
+        max-height: 80px;
+    }
     .booking-form .btn { 
         width: 100%; 
         margin-top: 5px; 
-        padding: 14px; 
-        font-size: 16px;
+        padding: 10px;
+        font-size: 14px;
         background: #b45f2b;
         color: #fff;
         border: none;
-        border-radius: 8px;
+        border-radius: 6px;
         cursor: pointer;
         transition: 0.3s;
     }
@@ -108,34 +177,55 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(180,95,43,0.3);
     }
-    .booking-form .btn i { margin-right: 8px; }
+    .booking-form .btn i { 
+        margin-right: 8px; 
+    }
     .booking-form .error { 
         background: #fee; 
         color: #c00; 
-        padding: 12px 16px; 
-        border-radius: 8px; 
-        margin-bottom: 20px; 
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin-bottom: 15px;
         border-left: 4px solid #c00; 
         display: flex;
         align-items: center;
         gap: 8px;
+        font-size: 13px;
     }
     .booking-form .success { 
         background: #efe; 
         color: #060; 
-        padding: 12px 16px; 
-        border-radius: 8px; 
-        margin-bottom: 20px; 
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin-bottom: 15px;
         border-left: 4px solid #060;
         display: flex;
         align-items: center;
         gap: 8px;
+        font-size: 13px;
+    }
+    
+    .booking-info .contact-info {
+        margin-top: 20px;
     }
     
     @media (max-width: 900px) { 
-        .booking-grid { grid-template-columns: 1fr; }
-        .form-row { grid-template-columns: 1fr; }
-        .form-group.full-width { grid-column: 1; }
+        .booking-grid { 
+            grid-template-columns: 1fr; 
+            gap: 20px;
+        }
+        .form-row { 
+            grid-template-columns: 1fr; 
+        }
+        .form-group.full-width { 
+            grid-column: 1; 
+        }
+        .booking-info {
+            padding: 25px;
+        }
+        .booking-form {
+            padding: 25px;
+        }
     }
 </style>
 
@@ -150,15 +240,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <li><strong>Lunch:</strong> 11:45 AM – 6:45 PM</li>
                     <li><strong>Dinner:</strong> 7:00 PM – 10:30 PM</li>
                 </ul>
-                <div style="margin-top:30px;">
-                    <h3 style="color:#f1c40f;"><i class="fas fa-info-circle"></i> Table Types</h3>
+                <div style="margin-top:20px;">
+                    <h3 style="color:#f1c40f;font-size:1.2rem;"><i class="fas fa-info-circle"></i> Table Types</h3>
                     <ul>
                         <li>Messob (Traditional)</li>
                         <li>Circular Table</li>
                         <li>Rectangular Table</li>
                     </ul>
                 </div>
-                <div style="margin-top:30px;">
+                <div style="margin-top:20px;">
                     <p><i class="fas fa-phone" style="color:#f1c40f;"></i> +251 924 950 125</p>
                     <p><i class="fas fa-map-marker-alt" style="color:#f1c40f;"></i> Addis Ababa, Kasaches</p>
                 </div>
@@ -222,7 +312,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <div class="form-group full-width">
                             <label>Special requests</label>
-                            <textarea name="requests" placeholder="Any special requests..." rows="3"></textarea>
+                            <textarea name="requests" placeholder="Any special requests..." rows="2"></textarea>
                         </div>
                     </div>
 

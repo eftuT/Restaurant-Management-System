@@ -1,5 +1,4 @@
 <?php
-// NO session_start() here - it's in header.php
 require_once 'includes/header.php';
 require_once 'C:/xampp/htdocs/Restaurant-Management-System/Backend/includes/db.php';
 
@@ -37,7 +36,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <style>
-    .contact-page { padding: 40px 0; }
+    .contact-page { 
+        padding: 20px 0 40px 0;  /* Changed from 40px to 20px */
+    }
+    .contact-page .section-title {
+        margin-top: 0;  /* Added to remove top margin */
+    }
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; background: #f7f2e9; padding: 50px 40px; border-radius: 30px; }
     .contact-info h3 { font-size: 1.8rem; color: #2c1f16; margin-bottom: 20px; }
     .contact-info p { padding: 8px 0; font-size: 1.1rem; }

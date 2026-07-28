@@ -13,21 +13,16 @@ if (!isset($_SESSION['adminLoggedIn'])) {
     <title>SEN'Q Admin - <?php echo $page_title ?? 'Dashboard'; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="assets/css/custom-styles.css" />
     <style>
         /* ===== ADMIN THEME - BEIGE/BROWN ===== */
         :root {
             --primary: #b45f2b;
             --primary-dark: #8a471f;
-            --primary-light: #d4a574;
             --bg-cream: #fefcf3;
             --bg-beige: #f7f2e9;
-            --bg-light: #faf8f5;
             --text-dark: #2c1f16;
             --text-muted: #7a6a5a;
             --border-light: #e8e0d8;
-            --shadow: 0 2px 12px rgba(44, 31, 22, 0.08);
-            --shadow-hover: 0 6px 24px rgba(44, 31, 22, 0.12);
         }
 
         /* ===== GLOBAL ===== */
@@ -53,14 +48,33 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             right: 0;
             z-index: 1000;
         }
+        /* ===== LOGO WITH BIG S ===== */
         .top-nav .logo {
-            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 24px;
             font-weight: 700;
         }
-        .top-nav .logo span { color: #f1c40f; }
-        .top-nav .logo i { color: #f1c40f; margin-right: 8px; }
+        .top-nav .logo .logo-icon {
+            background: #b45f2b;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .top-nav .logo .logo-text {
+            color: #f1c40f;
+            letter-spacing: 2px;
+            font-size: 24px;
+        }
 
-        /* ===== USER DROPDOWN (FIXED) ===== */
+        /* ===== USER DROPDOWN ===== */
         .top-nav .user-section {
             display: flex;
             align-items: center;
@@ -91,9 +105,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             z-index: 2000;
             border: 1px solid var(--border-light);
         }
-        .top-nav .user-section .dropdown-menu.show {
-            display: block;
-        }
+        .top-nav .user-section .dropdown-menu.show { display: block; }
         .top-nav .user-section .dropdown-menu a {
             display: block;
             padding: 10px 22px;
@@ -114,9 +126,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             border-top: 1px solid var(--border-light);
             margin: 5px 0;
         }
-        .top-nav .user-section .dropdown-menu .logout {
-            color: #e74c3c;
-        }
+        .top-nav .user-section .dropdown-menu .logout { color: #e74c3c; }
         .top-nav .user-section .dropdown-menu .logout:hover {
             background: #fdf0ed;
             color: #c0392b;
@@ -165,7 +175,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             background: #fff;
             border-radius: 16px;
             padding: 25px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 12px rgba(44,31,22,0.08);
             margin-bottom: 30px;
             border: 1px solid var(--border-light);
         }
@@ -189,7 +199,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             background: #fff;
             border-radius: 16px;
             padding: 25px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 12px rgba(44,31,22,0.08);
             border-left: 4px solid var(--primary);
             border: 1px solid var(--border-light);
         }
@@ -221,7 +231,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             padding: 12px;
             border-bottom: 1px solid var(--border-light);
         }
-        .table tr:hover { background: var(--bg-light); }
+        .table tr:hover { background: #faf8f5; }
 
         /* ===== BADGES ===== */
         .badge {
@@ -247,38 +257,22 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             display: inline-block;
             text-decoration: none;
         }
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-        }
+        .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(180, 95, 43, 0.25);
+            box-shadow: 0 6px 20px rgba(180,95,43,0.25);
             color: #fff;
         }
-        .btn-success {
-            background: #27ae60;
-            color: #fff;
-        }
-        .btn-success:hover {
-            background: #1e8449;
-            color: #fff;
-        }
-        .btn-danger {
-            background: #e74c3c;
-            color: #fff;
-        }
-        .btn-danger:hover {
-            background: #c0392b;
-            color: #fff;
-        }
-        .btn-sm {
-            padding: 5px 14px;
-            font-size: 12px;
-        }
+        .btn-success { background: #27ae60; color: #fff; }
+        .btn-success:hover { background: #1e8449; color: #fff; }
+        .btn-danger { background: #e74c3c; color: #fff; }
+        .btn-danger:hover { background: #c0392b; color: #fff; }
+        .btn-sm { padding: 5px 14px; font-size: 12px; }
+        .btn-secondary { background: #95a5a6; color: #fff; }
+        .btn-secondary:hover { background: #7f8c8d; color: #fff; }
 
-        /* ===== FORMS (FIXED DROPDOWN) ===== */
+        /* ===== FORMS ===== */
         .form-control {
             width: 100%;
             padding: 10px 14px;
@@ -288,27 +282,38 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             transition: 0.3s;
             background: #fff !important;
             color: var(--text-dark) !important;
-            -webkit-appearance: auto;
-            appearance: auto;
+            -webkit-appearance: auto !important;
+            appearance: auto !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            min-height: 42px;
         }
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(180, 95, 43, 0.1);
+            box-shadow: 0 0 0 3px rgba(180,95,43,0.1);
             background: #fff !important;
         }
-        .form-control option {
+        select.form-control option,
+        select option {
             color: var(--text-dark) !important;
             background: #fff !important;
-            padding: 8px 12px;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            min-height: 30px !important;
         }
-        select.form-control {
-            color: var(--text-dark) !important;
-            background: #fff !important;
-        }
-        select.form-control option:checked {
+        select.form-control option:checked,
+        select option:checked {
             background: var(--primary) !important;
             color: #fff !important;
+        }
+        .form-group {
+            overflow: visible !important;
+        }
+        .panel-body,
+        .card-body {
+            overflow: visible !important;
         }
 
         /* ===== MODAL ===== */
@@ -322,11 +327,7 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             height: 100%;
             background: rgba(0,0,0,0.5);
         }
-        .modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .modal.show { display: flex; justify-content: center; align-items: center; }
         .modal-content {
             background: #fff;
             border-radius: 16px;
@@ -345,7 +346,9 @@ if (!isset($_SESSION['adminLoggedIn'])) {
             .sidebar { width: 60px; }
             .sidebar ul li a span { display: none; }
             .main-content { margin-left: 60px; }
-            .top-nav .logo { font-size: 18px; }
+            .top-nav .logo .logo-icon { width: 40px; height: 40px; font-size: 22px; }
+            .top-nav .logo .logo-text { font-size: 20px; }
+            select.form-control { font-size: 16px !important; }
         }
     </style>
 </head>
@@ -354,7 +357,9 @@ if (!isset($_SESSION['adminLoggedIn'])) {
 <!-- TOP NAV -->
 <div class="top-nav">
     <div class="logo">
-        <i class="fa fa-cutlery"></i> <span>SEN'Q</span> Admin
+        <div class="logo-icon">S</div>
+        <span class="logo-text">SEN'Q</span>
+         <span style="color:#aaa;font-size:20px;font-weight:600;margin-left:4px;">Admin</span>
     </div>
     <div class="user-section">
         <span><i class="fa fa-user-circle"></i> <?php echo $_SESSION['adminUser'] ?? 'Admin'; ?></span>
@@ -363,7 +368,6 @@ if (!isset($_SESSION['adminLoggedIn'])) {
         </div>
         <div class="dropdown-menu" id="userDropdown">
             <a href="usersettings.php"><i class="fa fa-user"></i> Profile</a>
-            <a href="settings.php"><i class="fa fa-cog"></i> Settings</a>
             <div class="divider"></div>
             <a href="logout.php" class="logout"><i class="fa fa-sign-out"></i> Logout</a>
         </div>
@@ -420,7 +424,7 @@ function toggleDropdown() {
 document.addEventListener('click', function(event) {
     var dropdown = document.getElementById('userDropdown');
     var toggle = document.querySelector('.dropdown-toggle');
-    if (!dropdown.contains(event.target) && !toggle.contains(event.target)) {
+    if (dropdown && !dropdown.contains(event.target) && toggle && !toggle.contains(event.target)) {
         dropdown.classList.remove('show');
     }
 });
